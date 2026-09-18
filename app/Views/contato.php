@@ -1,6 +1,3 @@
-<?php
-/** @var array $conteudo */
-?>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -9,7 +6,6 @@
 <title>Contato</title>
 </head>
 <body>
-<h1><?= $conteudo['Titulo'] ?></h1>
-<p><?= $conteudo['Texto'] ?></p>
+<h1>Página de contato</h1>
 </body>
 </html>
