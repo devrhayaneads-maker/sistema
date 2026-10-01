@@ -18,6 +18,20 @@ class App extends BaseConfig
      */
     public string $baseURL = 'http://localhost:8080/';
 
+    // Descobre o endereço do site sozinho (funciona no localhost e no
+    // servidor da sala, ex.: http://192.168.51.20/ads209/.../public/)
+    public function __construct()
+    {
+        parent::__construct();
+
+        if (isset($_SERVER['HTTP_HOST'], $_SERVER['SCRIPT_NAME'])) {
+            $https = ! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
+            $pasta = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'])), '/');
+
+            $this->baseURL = ($https ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $pasta . '/';
+        }
+    }
+
     /**
      * Allowed Hostnames in the Site URL other than the hostname in the baseURL.
      * If you want to accept multiple Hostnames, set this.
@@ -93,7 +107,7 @@ class App extends BaseConfig
      * strings (like currency markers, numbers, etc), that your program
      * should run under for this request.
      */
-    public string $defaultLocale = 'en';
+    public string $defaultLocale = 'pt';
 
     /**
      * --------------------------------------------------------------------------
@@ -120,7 +134,7 @@ class App extends BaseConfig
      *
      * @var list<string>
      */
-    public array $supportedLocales = ['en'];
+    public array $supportedLocales = ['pt', 'en'];
 
     /**
      * --------------------------------------------------------------------------
