@@ -18,6 +18,11 @@ $routes->get('blog', static fn () => redirect()->to('pt/blog'));
 $routes->get('cv', static fn () => redirect()->to('pt/cv'));
 $routes->get('contato', static fn () => redirect()->to('pt/contato'));
 
+// Área de administração dos títulos e textos cadastrados no banco de dados.
+$routes->get('conteudos', 'ConteudoController::listar');
+$routes->get('conteudos/editar/(:num)', 'ConteudoController::editar/$1');
+$routes->post('conteudos/atualizar/(:num)', 'ConteudoController::atualizar/$1');
+
 // {locale} = idioma do site: "pt" (português) ou "en" (inglês)
 $routes->get('{locale}', 'ConteudoController::index');
 $routes->get('{locale}/projetos', 'ConteudoController::projetos');

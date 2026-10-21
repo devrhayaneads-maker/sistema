@@ -2,12 +2,13 @@
 
 namespace App\Controllers;
 
-use App\Controllers\BaseController;
+use App\Models\ConteudoModel;
+use CodeIgniter\Exceptions\PageNotFoundException;
 
 class ConteudoController extends BaseController
 {
     // Em app/Controllers/BaseController.php (ou dentro do seu Controller específico)
-    protected $helpers = ['url'];
+    protected $helpers = ['url', 'form'];
 
     // Dados da lateral (foto, nome e links), que aparece em todas as páginas
     private function perfil(): array
@@ -93,5 +94,72 @@ class ConteudoController extends BaseController
         ];
 
         return $this->pagina('contato', 'contato', $data);
+    }
+
+    /** Exibe todos os títulos e textos que podem ser administrados. */
+    public function listar(): string
+    {
+        $model = new ConteudoModel();
+
+        return view('conteudo/listar', [
+            'conteudos' => $model->findAll(),
+        ]);
+    }
+
+    /** Mostra o formulário do conteúdo escolhido. */
+    public function editar(int $id): string
+    {
+        $model = new ConteudoModel();
+        $conteudo = $model->find($id);
+
+        if ($conteudo === null) {
+            throw PageNotFoundException::forPageNotFound(
+                'O conteúdo solicitado não foi encontrado.'
+            );
+        }
+
+        return view('conteudo/editar', [
+            'conteudo' => $conteudo,
+            'erros'    => [],
+        ]);
+    }
+
+    /** Valida e grava no banco as alterações feitas no formulário. */
+    public function atualizar(int $id)
+    {
+        $model = new ConteudoModel();
+        $conteudo = $model->find($id);
+
+        if ($conteudo === null) {
+            throw PageNotFoundException::forPageNotFound(
+                'O conteúdo solicitado não foi encontrado.'
+            );
+        }
+
+        $dadosPost = [
+            'Titulo' => $this->request->getPost('Titulo'),
+            'Texto'  => $this->request->getPost('Texto'),
+        ];
+
+        $regras = [
+            'Titulo' => 'required|max_length[255]',
+            'Texto'  => 'required',
+        ];
+
+        if (! $this->validate($regras)) {
+            $conteudo['Titulo'] = $dadosPost['Titulo'] ?? '';
+            $conteudo['Texto'] = $dadosPost['Texto'] ?? '';
+
+            return view('conteudo/editar', [
+                'conteudo' => $conteudo,
+                'erros'    => $this->validator->getErrors(),
+            ]);
+        }
+
+        $model->update($id, $dadosPost);
+
+        return redirect()
+            ->to(site_url('conteudos'))
+            ->with('mensagem', 'Conteúdo atualizado com sucesso.');
     }
 }
