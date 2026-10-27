@@ -3,35 +3,164 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
-// Faz o include do ConteudoModel no arquivo ConteudoController
 use App\Models\ConteudoModel;
+use CodeIgniter\Exceptions\PageNotFoundException;
 
 class ConteudoController extends BaseController
 {
-    public function quemSou(): string
-{
-    $conteudoModel = new ConteudoModel();
+    // Em app/Controllers/BaseController.php (ou dentro do seu Controller específico)
+    protected $helpers = ['url', 'form'];
 
-    $dados['conteudo'] = $conteudoModel->find(1);
+    // Dados da lateral (foto, nome e links), que aparece em todas as páginas
+    private function perfil(): array
+    {
+        return [
+            'nome'      => 'Rhayane Freitas',
+            'descricao' => lang('Site.descricao'),
+            'frase'     => lang('Site.frase'),
+            'foto'      => 'assets/img/foto.jpg',
+            'links'     => [
+                ['icone' => 'fa-solid fa-envelope',  'texto' => 'E-mail',    'url' => 'mailto:seu-email@exemplo.com'],
+                ['icone' => 'fa-brands fa-github',   'texto' => 'GitHub',    'url' => 'https://github.com/seu-usuario'],
+                ['icone' => 'fa-brands fa-linkedin', 'texto' => 'LinkedIn',  'url' => 'https://www.linkedin.com/in/seu-usuario'],
+                ['icone' => 'fa-brands fa-instagram','texto' => 'Instagram', 'url' => 'https://www.instagram.com/seu-usuario'],
+                ['icone' => 'fa-brands fa-youtube',  'texto' => 'YouTube',   'url' => 'https://www.youtube.com/@seu-usuario'],
+            ],
+        ];
+    }
 
-    return view('quem_sou', $dados);
-}
+    // Monta a página já com os dados da lateral e do idioma.
+    // $endereco é o final do link (ex.: "blog"), usado no botão US | BR
+    private function pagina(string $view, string $endereco, array $data)
+    {
+        $data['perfil']   = $this->perfil();
+        $data['idioma']   = $this->request->getLocale();
+        $data['endereco'] = $endereco;
 
-public function produtos(): string
-{
-    $conteudoModel = new ConteudoModel();
+        return view($view, $data);
+    }
 
-    $dados['conteudo'] = $conteudoModel->find(2);
+    public function index()
+    {
+        $data['conteudo']   = ['Titulo' => lang('Site.inicioTitulo')];
+        $data['paragrafos'] = lang('Site.inicioParagrafos');
 
-    return view('produtos', $dados);
-}
+        return $this->pagina('home', '', $data);
+    }
 
-public function contato(): string
-{
-    $conteudoModel = new ConteudoModel();
+    public function projetos()
+    {
+        $data['conteudo'] = ['Titulo' => lang('Site.projetosTitulo')];
+        $data['projetos'] = lang('Site.projetos');
 
-    $dados['conteudo'] = $conteudoModel->find(3);
+        return $this->pagina('projetos', 'projetos', $data);
+    }
 
-    return view('contato', $dados);
-}
+    public function certificacoes()
+    {
+        $data['conteudo']      = ['Titulo' => lang('Site.certificacoesTitulo')];
+        $data['certificacoes'] = lang('Site.certificacoes');
+
+        return $this->pagina('certificacoes', 'certificacoes', $data);
+    }
+
+    public function publicacoes()
+    {
+        $data['conteudo']    = ['Titulo' => lang('Site.publicacoesTitulo')];
+        $data['publicacoes'] = lang('Site.publicacoes');
+
+        return $this->pagina('publicacoes', 'publicacoes', $data);
+    }
+
+    public function blog()
+    {
+        $data['conteudo'] = ['Titulo' => lang('Site.blogTitulo')];
+        $data['posts']    = lang('Site.posts');
+
+        return $this->pagina('blog', 'blog', $data);
+    }
+
+    public function cv()
+    {
+        $data['conteudo'] = ['Titulo' => lang('Site.cvTitulo')];
+
+        return $this->pagina('cv', 'cv', $data);
+    }
+
+    public function contato()
+    {
+        $data['conteudo'] = [
+            'Titulo' => lang('Site.contatoTitulo'),
+            'Texto'  => lang('Site.contatoTexto'),
+        ];
+
+        return $this->pagina('contato', 'contato', $data);
+    }
+
+    // Lista todos os registros da tabela Conteudo
+    public function listar(): string
+    {
+        $model = new ConteudoModel();
+
+        return view('conteudo/listar', [
+            'conteudos' => $model->findAll(),
+        ]);
+    }
+
+    // Abre o formulário de edição do registro clicado
+    public function editar($id): string
+    {
+        $model    = new ConteudoModel();
+        $conteudo = $model->find($id);
+
+        if ($conteudo === null) {
+            throw PageNotFoundException::forPageNotFound(
+                'O conteúdo solicitado não foi encontrado.'
+            );
+        }
+
+        return view('conteudo/editar', [
+            'conteudo' => $conteudo,
+            'erros'    => [],
+        ]);
+    }
+
+    // Salva as alterações no banco
+    public function atualizar($id)
+    {
+        $model    = new ConteudoModel();
+        $conteudo = $model->find($id);
+
+        if ($conteudo === null) {
+            throw PageNotFoundException::forPageNotFound(
+                'O conteúdo solicitado não foi encontrado.'
+            );
+        }
+
+        $dadosPost = [
+            'Titulo' => $this->request->getPost('Titulo'),
+            'Texto'  => $this->request->getPost('Texto'),
+        ];
+
+        $regras = [
+            'Titulo' => 'required|max_length[255]',
+            'Texto'  => 'required',
+        ];
+
+        if (! $this->validate($regras)) {
+            $conteudo['Titulo'] = $dadosPost['Titulo'] ?? '';
+            $conteudo['Texto']  = $dadosPost['Texto'] ?? '';
+
+            return view('conteudo/editar', [
+                'conteudo' => $conteudo,
+                'erros'    => $this->validator->getErrors(),
+            ]);
+        }
+
+        $model->update($id, $dadosPost);
+
+        return redirect()
+            ->to(site_url('conteudos'))
+            ->with('mensagem', 'Conteúdo atualizado com sucesso.');
+    }
 }
