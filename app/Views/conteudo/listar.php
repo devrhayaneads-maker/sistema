@@ -1,7 +1,9 @@
 <?php
 /**
- * Variável enviada pelo ConteudoController::listar()
+ * Variáveis enviadas pelo ConteudoController::listar()
  * @var array $conteudos
+ * @var \CodeIgniter\Shield\Entities\User $usuario
+ * @var bool $ehAdmin
  */
 ?>
 <!DOCTYPE html>
@@ -12,10 +14,22 @@
     <title>Conteúdos</title>
 </head>
 <body>
+    <p>
+        Logado como <strong><?= esc($usuario->username ?? $usuario->getEmail()) ?></strong>
+        <?php if ($ehAdmin): ?>
+            | <a href="<?= site_url('admin') ?>">Painel administrativo</a>
+        <?php endif; ?>
+        | <a href="<?= site_url('logout') ?>">Sair</a>
+    </p>
+
     <h1>Conteúdos cadastrados</h1>
 
     <?php if ($mensagem = session()->getFlashdata('mensagem')): ?>
         <p><?= esc($mensagem) ?></p>
+    <?php endif; ?>
+
+    <?php if ($erro = session()->getFlashdata('error')): ?>
+        <p><strong><?= esc($erro) ?></strong></p>
     <?php endif; ?>
 
     <?php if (empty($conteudos)): ?>

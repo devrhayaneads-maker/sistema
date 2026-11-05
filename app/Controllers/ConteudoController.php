@@ -102,8 +102,19 @@ class ConteudoController extends BaseController
     {
         $model = new ConteudoModel();
 
+        // Verifica se o usuário logado pertence ao grupo admin
+        // (usado para mostrar o link do painel só para administradores)
+        $user    = auth()->user();
+        $ehAdmin = false;
+
+        if ($user !== null && $user->inGroup('admin')) {
+            $ehAdmin = true;
+        }
+
         return view('conteudo/listar', [
             'conteudos' => $model->findAll(),
+            'usuario'   => $user,
+            'ehAdmin'   => $ehAdmin,
         ]);
     }
 

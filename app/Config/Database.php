@@ -22,14 +22,18 @@ class Database extends Config
     /**
      * The default database connection.
      *
+     * Os mesmos dados valem no XAMPP (localhost) e no servidor da sala
+     * (192.168.51.20): nos dois o banco fica em "localhost" com o
+     * usuário a28305. Assim a pasta pode ser enviada sem alterar nada.
+     *
      * @var array<string, mixed>
      */
     public array $default = [
         'DSN'          => '',
         'hostname'     => 'localhost',
-        'username'     => '',
-        'password'     => '',
-        'database'     => '',
+        'username'     => 'a28305',
+        'password'     => '123456',
+        'database'     => 'a28305',
         'DBDriver'     => 'MySQLi',
         'DBPrefix'     => '',
         'pConnect'     => false,
