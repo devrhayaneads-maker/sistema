@@ -225,7 +225,7 @@
 
     <div class="heroe">
 
-        <h1>Bem Vindo aoCodeIgniter</h1>
+        <h1>Bem Vindo ao CodeIgniter</h1>
 
         <h2>The small framework with powerful features</h2>
 

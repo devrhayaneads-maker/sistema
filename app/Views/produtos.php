@@ -1,2 +1,6 @@
-<h1><?= $conteudo['Titulo'] ?></h1>
-<p><?= $conteudo['Texto'] ?></p>
+<?= $this->extend('layout/main') ?>
+
+<?= $this->section('conteudo') ?>
+    <h1><?= esc($conteudo['Titulo']) ?></h1>
+    <p><?= esc($conteudo['Texto']) ?></p>
+<?= $this->endSection() ?>
