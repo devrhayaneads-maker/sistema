@@ -30,8 +30,13 @@ class Session extends BaseConfig
      * --------------------------------------------------------------------------
      *
      * The session cookie name, must contain only [0-9a-z_-] characters
+     *
+     * Nome próprio (com a matrícula) para o login não se misturar com os
+     * sistemas dos colegas no mesmo servidor (192.168.51.20). Com o nome
+     * padrão "ci_session", abrir o sistema de outro aluno no mesmo
+     * navegador derrubava o seu login.
      */
-    public string $cookieName = 'ci_session';
+    public string $cookieName = 'ci_session_a28305';
 
     /**
      * --------------------------------------------------------------------------
