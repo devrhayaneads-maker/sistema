@@ -21,23 +21,32 @@ $routes->get('blog', static fn () => redirect()->to('pt/blog'));
 $routes->get('cv', static fn () => redirect()->to('pt/cv'));
 $routes->get('contato', static fn () => redirect()->to('pt/contato'));
 
-// Listagem, formulário de edição e atualização
+// Rotas que exigem login: listagem, formulário de edição e atualização
 // (precisam vir antes das rotas com {locale}, senão "conteudos" vira um idioma)
-$routes->get('conteudos', 'ConteudoController::listar', ['filter' => 'session']);
-$routes->get('conteudos/editar/(:num)', 'ConteudoController::editar/$1', ['filter' => 'session']);
-$routes->post('conteudos/atualizar/(:num)', 'ConteudoController::atualizar/$1', ['filter' => 'session']);
+$routes->group('', ['filter' => 'session'], static function ($routes) {
+    $routes->get('conteudos', 'ConteudoController::listar');
+    $routes->get('conteudos/editar/(:num)', 'ConteudoController::editar/$1');
+    $routes->post('conteudos/atualizar/(:num)', 'ConteudoController::atualizar/$1');
+});
 
 // Painel: exige login e grupo admin
 $routes->get('admin', 'Admin\Painel::index', [
     'filter' => ['session', 'group:admin'],
 ]);
 
-// Seções do site e usuários dentro do painel: exigem login e grupo admin
-$routes->get('admin/usuarios', 'Admin\Painel::usuarios', [
-    'filter' => ['session', 'group:admin'],
-]);
+// Seções do site dentro do painel: exigem login e grupo admin
 $routes->get('admin/(projetos|certificacoes|publicacoes|blog)', 'Admin\Painel::secao/$1', [
     'filter' => ['session', 'group:admin'],
+]);
+
+// Usuários: a lista exige login e grupo admin
+$routes->get('admin/usuarios', 'Admin\Usuarios::index', [
+    'filter' => ['session', 'group:admin'],
+]);
+
+// Cadastro de usuário: exige login e a permissão users.create
+$routes->post('usuarios', 'Admin\Usuarios::store', [
+    'filter' => ['session', 'permission:users.create'],
 ]);
 
 // Logout: aceita apenas usuários autenticados

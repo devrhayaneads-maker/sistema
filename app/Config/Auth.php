@@ -77,9 +77,12 @@ class Auth extends ShieldAuth
         'register'         => '/',
         'login'            => 'admin',
         'logout'           => 'login',
-        'group_denied'     => 'login',
-        'permission_denied'=> 'login',
-        'force_reset'      => 'login',
+        // Quem já está logado e não tem acesso volta para a página inicial.
+        // Não use 'login' aqui: quem já está logado é mandado de volta para
+        // 'admin' pelo Shield, e isso vira um redirecionamento sem fim.
+        'group_denied'      => '/',
+        'permission_denied' => '/',
+        'force_reset'       => '/',
     ];
 
     /**

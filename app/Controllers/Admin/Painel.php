@@ -20,7 +20,10 @@ class Painel extends BaseController
 
     public function index()
     {
-        return view('admin/painel');
+        return view('admin/painel', [
+            'ativo'  => 'admin',
+            'titulo' => 'Painel administrativo',
+        ]);
     }
 
     // Abre o formulário de edição da seção clicada no menu (ex.: admin/projetos)
@@ -45,14 +48,6 @@ class Painel extends BaseController
             'erros'    => [],
             'ativo'    => $secao,
             'titulo'   => 'Editar conteúdo',
-        ]);
-    }
-
-    // Lista os usuários cadastrados e os grupos de cada um
-    public function usuarios()
-    {
-        return view('admin/usuarios', [
-            'usuarios' => auth()->getProvider()->findAll(),
         ]);
     }
 

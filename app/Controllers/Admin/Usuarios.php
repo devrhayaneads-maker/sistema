@@ -18,6 +18,8 @@ class Usuarios extends BaseController
         return view('admin/usuarios', [
             'usuarios' => $users->withIdentities()->withGroups()->findAll(),
             'erros'    => session('erros') ?? [],
+            'ativo'    => 'usuarios',
+            'titulo'   => 'Usuários',
         ]);
     }
 
