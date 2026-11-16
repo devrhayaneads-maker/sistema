@@ -1,20 +1,6 @@
-<?php
-/**
- * Variável enviada pelo ConteudoController::listar()
- * @var array $conteudos
- */
-?>
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conteúdos</title>
-    <link rel="stylesheet" href="<?= base_url('assets/css/estilo.css') ?>">
-</head>
-<body class="admin">
-    <?= view('admin/menu', ['ativo' => 'conteudos']) ?>
-    <main class="container">
+<?= $this->extend('layout/admin') ?>
+
+<?= $this->section('conteudo') ?>
     <h1>Conteúdos cadastrados</h1>
 
     <?php if ($mensagem = session()->getFlashdata('mensagem')): ?>
@@ -50,6 +36,4 @@
             </tbody>
         </table>
     <?php endif; ?>
-    </main>
-</body>
-</html>
+<?= $this->endSection() ?>

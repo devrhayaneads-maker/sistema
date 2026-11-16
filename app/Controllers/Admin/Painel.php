@@ -44,6 +44,7 @@ class Painel extends BaseController
             'conteudo' => $conteudo,
             'erros'    => [],
             'ativo'    => $secao,
+            'titulo'   => 'Editar conteúdo',
         ]);
     }
 

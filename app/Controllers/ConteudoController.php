@@ -104,6 +104,8 @@ class ConteudoController extends BaseController
 
         return view('conteudo/listar', [
             'conteudos' => $model->findAll(),
+            'ativo'     => 'conteudos',
+            'titulo'    => 'Conteúdos',
         ]);
     }
 
@@ -122,6 +124,8 @@ class ConteudoController extends BaseController
         return view('conteudo/editar', [
             'conteudo' => $conteudo,
             'erros'    => [],
+            'ativo'    => 'conteudos',
+            'titulo'   => 'Editar conteúdo',
         ]);
     }
 
@@ -154,6 +158,8 @@ class ConteudoController extends BaseController
             return view('conteudo/editar', [
                 'conteudo' => $conteudo,
                 'erros'    => $this->validator->getErrors(),
+                'ativo'    => 'conteudos',
+                'titulo'   => 'Editar conteúdo',
             ]);
         }
 
